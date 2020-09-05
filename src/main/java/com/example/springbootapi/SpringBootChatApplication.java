@@ -15,11 +15,11 @@ public class SpringBootChatApplication {
         SpringApplication.run(SpringBootChatApplication.class, args);
     }
 
-    @Controller
-    public static class MainController {
-        @GetMapping("/")
-        public String main() {
-            return "redirect:/chat/rooms";
-        }
-    }
+//    @Controller
+//    public static class MainController {
+//        @GetMapping("/")
+//        public String main() {
+//            return "redirect:/chat/rooms";
+//        }
+//    }
 }

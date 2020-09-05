@@ -10,7 +10,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ChatMessage {
-    private String chatRoomId;
+    private String roomId;
     private String writer;
     private String message;
     private String writeDate;
