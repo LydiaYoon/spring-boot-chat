@@ -1,4 +1,4 @@
-package com.example.springbootapi.chatroom.model;
+package com.example.springbootchat.chat.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
