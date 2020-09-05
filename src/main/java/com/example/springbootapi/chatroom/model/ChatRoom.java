@@ -40,16 +40,6 @@ public class ChatRoom {
         sessions.add(session);
     }
 
-//    private <T> void send(T messageObject, ObjectMapper objectMapper) {
-//        try {
-//
-//            WebSocketMessage message = new TextMessage(objectMapper.writeValueAsString(messageObject));
-//            sessions.parallelStream().forEach(session -> session.sendMessage(message));
-//        } catch (JsonProcessingException e) {
-//            throw new RuntimeException(e.getMessage(), e);
-//        }
-//    }
-
     private <T> void send(T messageObject, ObjectMapper objectMapper) {
         try {
             TextMessage message = new TextMessage(objectMapper.writeValueAsString(messageObject));
