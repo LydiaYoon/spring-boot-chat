@@ -1,33 +1,63 @@
 package com.example.springbootchat.chat.repository;
 
 import com.example.springbootchat.chat.model.ChatRoom;
+import com.example.springbootchat.chat.pubsub.RedisSubscriber;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.core.HashOperations;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.listener.ChannelTopic;
+import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.PostConstruct;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
+@RequiredArgsConstructor
 @Repository
 public class ChatRoomRepository {
-    private Map<String, ChatRoom> chatRoomMap;
+
+    private final RedisMessageListenerContainer redisMessageListener;
+    private final RedisSubscriber redisSubscriber;
+
+    private static final String CHAT_ROOOMS = "CHAT_ROOM";
+    private final RedisTemplate<String, Object> redisTemplate;
+    private HashOperations<String, String, ChatRoom> opsHashChatRoom;
+
+    private Map<String, ChannelTopic> topics;
 
     @PostConstruct
     private void init() {
-        chatRoomMap = new LinkedHashMap<>();
+        opsHashChatRoom = redisTemplate.opsForHash();
+        topics = new HashMap<>();
     }
 
     public List<ChatRoom> findAllRoom() {
-        List<ChatRoom> chatRooms = new ArrayList<>(chatRoomMap.values());
-        Collections.reverse(chatRooms); // 채팅방 생성순서 최근순으로 반환
-        return chatRooms;
+        return opsHashChatRoom.values(CHAT_ROOOMS);
     }
 
     public ChatRoom findRoomById(String roomId) {
-        return chatRoomMap.get(roomId);
+        return opsHashChatRoom.get(CHAT_ROOOMS, roomId);
     }
 
     public ChatRoom createChatRoom(String name) {
         ChatRoom chatRoom = ChatRoom.create(name);
-        chatRoomMap.put(chatRoom.getRoomId(), chatRoom);
+        opsHashChatRoom.put(CHAT_ROOOMS, chatRoom.getRoomId(), chatRoom);
         return chatRoom;
+    }
+
+    public void enterChatRoom(String roomId) {
+        ChannelTopic topic = topics.get(roomId);
+        if (Objects.isNull(topic)) {
+            topic = new ChannelTopic(roomId);
+            redisMessageListener.addMessageListener(redisSubscriber, topic);
+            topics.put(roomId, topic);
+        }
+    }
+
+    public ChannelTopic getTopic(String roomId) {
+        return topics.get(roomId);
     }
 }

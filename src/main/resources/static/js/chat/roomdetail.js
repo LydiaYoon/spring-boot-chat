@@ -35,13 +35,12 @@ var vm = new Vue({
         receiveMessage: function (receive) {
             this.messages.unshift({
                 "type": receive.type,
-                "writer": receive.type === 'ENTER' ? 'system' : receive.writer,
+                "writer": receive.writer,
                 "message": receive.message
             })
         }
     }
 });
-
 // pub/sub event
 ws.connect({}, function (frame) {
     ws.subscribe("/sub/chat/room/" + vm.$data.roomId, function (message) {

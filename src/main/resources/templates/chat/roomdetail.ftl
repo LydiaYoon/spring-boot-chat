@@ -30,8 +30,8 @@
     </div>
     <ul class="list-group">
         <li class="list-group-item" v-for="message in messages"
-            v-bind:class="{ 'list-group-item-light text-center' : message.writer == 'system' }">
-            {{ message.writer != 'system' ? (message.writer + ' : ') : ''}}
+            v-bind:class="{ 'list-group-item-light text-center' : message.type != 'TALK' }">
+            {{ message.type == 'TALK' ? (message.writer + ' : ') : '' }}
             {{ message.message }}
         </li>
     </ul>
